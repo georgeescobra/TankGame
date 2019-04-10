@@ -17,6 +17,9 @@ public class Map extends Object{
         this.mapFile = new BufferedReader(new FileReader(map1));
     }
 
+    /*
+    This function is to convert the txtFile into an ArrayList
+     */
     public void generateMap(){
         try {
             base = new ArrayList<>();
@@ -39,5 +42,6 @@ public class Map extends Object{
             System.out.println("***Unable to Parse Map\n" + e);
         }
     }
+
 
 }
