@@ -1,13 +1,14 @@
-#!/usr/bin/env python3
 
 import random
 import sys
+
+
 # 1280 x 960
 x = 40
 y = 30
 print(sys.argv)
 fName = sys.argv[1] + ".txt"
-w = "1" #regulat wall
+w = "1" #unbreakable wall
 g = "0" #grass
 d = "2" #breakable wall
 
@@ -21,7 +22,8 @@ for i in range( y):
 			grid[i][j] = w if random.randint(0,1) % 2 == 0 else d
 		else:
 			grid[i][j] = g
-with open (fName, "w+") as toWrite:
+with open (fName, "w") as toWrite:
     for i in range(len(grid)):
+        # noinspection PyInterpreter
         [toWrite.write(grid[i][j]) for j in range(len(grid[i])) ]
         toWrite.write("\n")
