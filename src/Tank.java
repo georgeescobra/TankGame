@@ -11,6 +11,8 @@ public class Tank {
     private int vx;
     private int vy;
     private int angle;
+    private int height = 16;
+    private int width = 16;
 
     private final int R = 2;
     private final int rotationSpeed = 4;
@@ -111,30 +113,45 @@ public class Tank {
 
 
     private void checkBorder() {
-        if (x < 30) {
-            x = 30;
+        if (x < 32) {
+            x = 32;
         }
-        if (x >= Game.screenWidth - 33) {
-            x = Game.screenWidth - 33;
+        if (x > Game.screenWidth - 48) {
+            x = Game.screenWidth - 48;
         }
-        if (y < 40) {
-            y = 40;
+        if (y < 32) {
+            y = 32;
         }
-        if (y >= Game.screenHeight - 32) {
-            y = Game.screenHeight - 32;
+        if (y > Game.screenHeight - 64) {
+            y = Game.screenHeight - 64;
         }
     }
 
+    public int getX(){
+        return this.x;
+    }
+    public int getY(){
+        return this.y;
+    }
+    public int getAngle(){
+        return this.angle;
+    }
+    public int getH(){
+        return this.height;
+    }
+    public int getW(){
+        return this.width;
+    }
     @Override
     public String toString() {
         return "x=" + x + ", y=" + y + ", angle=" + angle;
     }
-
-    void drawImage(Graphics g) {
-        AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
-        rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(this.img, rotation, null);
-    }
+//
+//    void drawImage(Graphics g) {
+//        AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
+//        rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
+//        Graphics2D g2d = (Graphics2D) g;
+//        g2d.drawImage(this.img.getScaledInstance(16, 16, Image.SCALE_SMOOTH), rotation, null);
+//    }
 
 }
