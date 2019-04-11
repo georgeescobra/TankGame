@@ -74,8 +74,14 @@ public class Map extends JPanel{
     }
 
     public void loadMap(int x, int y, int type, Graphics2D b) {
-        if(type == 0){
-
+        if(type == 3){
+            try {
+                this.wall = ImageIO.read(new File("resources/Weapon.gif"));
+                this.unbreakableWall = new Map(x, y, type, this.wall);
+                b.drawImage(this.wall.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
+            }catch(IOException e){
+                System.out.println("***Unable to Generate Weapon PowerUp***");
+            }
         }else if(type == 1){
             try {
                 this.wall = ImageIO.read(new File("resources/Wall1.gif"));
@@ -92,6 +98,15 @@ public class Map extends JPanel{
                 b.drawImage(this.wall, x, y, null);
             }catch(IOException e){
                 System.out.println("***Unable To Generate breakable Wall***");
+            }
+        }else if(type ==4){
+            try {
+                this.wall = ImageIO.read(new File("resources/Shield1.gif"));
+                this.unbreakableWall = new Map(x, y, type, this.wall);
+                b.drawImage(this.wall.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
+            }catch(IOException e){
+                System.out.println("***Unable To Generate Shield PowerUp***");
+
             }
         }
     }

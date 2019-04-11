@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.io.IOException;
 import javax.swing.*;
@@ -22,6 +23,8 @@ public class Game extends JPanel{
     private JFrame jf;
     private Tank p1;
     private Tank p2;
+    BufferedImage tank1;
+    BufferedImage tank2;
     private Thread thread;
     protected boolean running = false;
 
@@ -59,12 +62,12 @@ public class Game extends JPanel{
 
             //loading the players
             try {
-                BufferedImage tank1 = ImageIO.read(new File("resources/Tank1.gif"));
-                p1 = new Tank(48, 48, 1, 1, 1, tank1);
-                back.drawImage(tank1, 48, 48, null);
-                BufferedImage tank2 = ImageIO.read(new File("resources/Tank2.gif"));
-                p2 = new Tank(1216, 688, 1, 1, 1, tank2);
-                back.drawImage(tank1, 1216, 688, null);
+                this.tank1 = ImageIO.read(new File("resources/Tank1.gif"));
+                p1 = new Tank(40, 40, 1, 1, 1, this.tank1);
+
+                tank2 = ImageIO.read(new File("resources/Tank2.gif"));
+                this.p2 = new Tank(1226, 648, 1, 1, 180, this.tank2);
+
             }catch(IOException e){
                 System.out.println("***Unable to Load Players***");
             }
@@ -113,9 +116,21 @@ public class Game extends JPanel{
         buffer = world.createGraphics();
         super.paintComponent(g2);
 
-        this.p1.drawImage(buffer);
-        this.p2.drawImage(buffer);
+//        this.p1.drawImage(buffer);
+//        this.p2.drawImage(buffer);
         g2.drawImage(world,0,0,null);
+
+        //this got rid of trail
+        //gotta learn how to do this with multiple paintComponents idk if this is correct way of doing it
+        AffineTransform rotation = AffineTransform.getTranslateInstance(p1.getX(), p1.getY());
+        rotation.rotate(Math.toRadians(p1.getAngle()), p1.getH() / 2.0, p1.getW() / 2.0);
+
+
+        AffineTransform rotation2 = AffineTransform.getTranslateInstance(p2.getX(), p2.getY());
+        rotation2.rotate(Math.toRadians(p2.getAngle()), p2.getH() / 2.0, p2.getW() / 2.0);
+        g2.drawImage(this.tank1.getScaledInstance(16, 16, Image.SCALE_SMOOTH), rotation, null);
+        g2.drawImage(this.tank2.getScaledInstance(16, 16, Image.SCALE_SMOOTH), rotation2, null);
+
 
     }
 
