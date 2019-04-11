@@ -22,35 +22,48 @@ public class Game extends JPanel{
     private JFrame jf;
     private Tank p1;
     private Tank p2;
+    private Thread thread;
+    protected boolean running = false;
+
 
     private void init(){
         try {
-            Map map1 = new Map();
-            map1.generateMap();
-        }catch(IOException e){
-            System.out.println("***Unable to Generate Map***\n" + e);
-        }
-        try {
+            running = true;
+
             this.jf = new JFrame("Tank Wars");
-            String path = "src/resources/Background.bmp";
-            BufferedImage bg = ImageIO.read(new File(path));
 
-            this.world = new BufferedImage(Game.screenWidth, Game.screenHeight, BufferedImage.TYPE_INT_ARGB);
 
+            this.world = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
             //Got this from stackoverflow https://stackoverflow.com/questions/10391778/create-a-bufferedimage-from-file-and-make-it-type-int-argb
-            Graphics2D back = this.world.createGraphics();
-            back.drawImage(bg.getScaledInstance(Game.screenWidth, Game.screenHeight, Image.SCALE_SMOOTH), 0, 0, null);
-            back.dispose();
+           Graphics2D back = this.world.createGraphics();
 
-            jf.setContentPane(new JLabel(new ImageIcon(bg)));
+            //image for the background
+            //I didn't want to stretch the image so I just repeated it
+            BufferedImage bg = ImageIO.read(new File("resources/Background.bmp"));
+            for(int i = 0; i < screenWidth; i+=320) {
+                for (int j = 0; j < screenHeight; j += 240) {
+                    back.drawImage(bg, i, j, null);
+                }
+            }
 
+
+            //this generates the map
+            //not sure if I was supposed to pass the Graphics2D object
+            //could not find another way to make it work.
+            try {
+                Map map1 = new Map();
+                map1.generateMap(back);
+            }catch(IOException e) {
+                System.out.println("***Unable to Generate Map***\n" + e);
+            }
+
+            //this sets the frame
             this.jf.setLayout(new BorderLayout());
             this.jf.add(this);
             //this.jf.addKeyListener(tc1);
-            this.jf.setSize(Game.screenWidth, Game.screenHeight + 30);
+            this.jf.setSize(Game.screenWidth, Game.screenHeight);
             this.jf.setResizable(false);
             jf.setLocationRelativeTo(null);
-
             this.jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.jf.setVisible(true);
 
@@ -58,26 +71,50 @@ public class Game extends JPanel{
             System.out.println("***Unable to Generate Game****\n" + e);
         }
 
+
     }
 
+    public synchronized void start(){
+        thread = new Thread(this.thread);
+        thread.start();
+        running = true;
+    }
+
+    public synchronized void stop(){
+        try{
+            thread.join();
+            running = false;
+        }catch(Exception e){
+
+        }
+    }
+
+
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         buffer = this.world.createGraphics();
         super.paintComponent(g2);
+
         //this.p1.drawImage(buffer);
         g2.drawImage(this.world,0,0,null);
 
-
     }
+
 
     public static void main(String[] args) {
         Game newGame = new Game();
         newGame.init();
 
-            while (true) {
-                //newGame.repaint();
-            }
+           try{
+               while(newGame.running){
+                   newGame.start();
+                   Thread.sleep(1000/144);
+               }
+
+           }catch(InterruptedException ignored){
+
+           }
 
 
     }
