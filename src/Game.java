@@ -62,10 +62,10 @@ public class Game extends JPanel{
 
             //loading the players
             try {
-                this.tank1 = ImageIO.read(new File("resources/Tank1.gif"));
+                this.tank1 = ImageIO.read(new File("resources/Tank1.png"));
                 p1 = new Tank(40, 40, 1, 1, 1, this.tank1);
 
-                tank2 = ImageIO.read(new File("resources/Tank2.gif"));
+                tank2 = ImageIO.read(new File("resources/Tank2.png"));
                 this.p2 = new Tank(1226, 648, 1, 1, 180, this.tank2);
 
             }catch(IOException e){
