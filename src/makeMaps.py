@@ -2,7 +2,8 @@
 import random
 import sys
 #!!!Got this from T.A.!!!
-
+#i changed the generated txt file because it was too big
+#keep this for future second game in case i want to add dynamic maps
 # 1280 x 960
 x = 40
 y = 30
