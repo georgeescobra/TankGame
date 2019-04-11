@@ -57,10 +57,27 @@ public class Game extends JPanel{
                 System.out.println("***Unable to Generate Map***\n" + e);
             }
 
+            //loading the players
+            try {
+                BufferedImage tank1 = ImageIO.read(new File("resources/Tank1.gif"));
+                p1 = new Tank(48, 48, 1, 1, 1, tank1);
+                back.drawImage(tank1, 48, 48, null);
+                BufferedImage tank2 = ImageIO.read(new File("resources/Tank2.gif"));
+                p2 = new Tank(1216, 688, 1, 1, 1, tank2);
+                back.drawImage(tank1, 1216, 688, null);
+            }catch(IOException e){
+                System.out.println("***Unable to Load Players***");
+            }
+
             //this sets the frame
             this.jf.setLayout(new BorderLayout());
             this.jf.add(this);
-            //this.jf.addKeyListener(tc1);
+
+            TankControl tankC1 = new TankControl(p2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_ENTER);
+            TankControl tankC2 = new TankControl(p1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
+
+            this.jf.addKeyListener(tankC1);
+            this.jf.addKeyListener(tankC2);
             this.jf.setSize(Game.screenWidth, Game.screenHeight);
             this.jf.setResizable(false);
             jf.setLocationRelativeTo(null);
@@ -93,11 +110,12 @@ public class Game extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        buffer = this.world.createGraphics();
+        buffer = world.createGraphics();
         super.paintComponent(g2);
 
-        //this.p1.drawImage(buffer);
-        g2.drawImage(this.world,0,0,null);
+        this.p1.drawImage(buffer);
+        this.p2.drawImage(buffer);
+        g2.drawImage(world,0,0,null);
 
     }
 
@@ -109,6 +127,11 @@ public class Game extends JPanel{
            try{
                while(newGame.running){
                    newGame.start();
+                   newGame.p1.update();
+                   newGame.p2.update();
+                   newGame.repaint();
+                   System.out.println(newGame.p1);
+                   System.out.println(newGame.p2);
                    Thread.sleep(1000/144);
                }
 
