@@ -76,7 +76,8 @@ public class Map extends JPanel{
     public void loadMap(int x, int y, int type, Graphics2D b) {
         if(type == 3){
             try {
-                this.wall = ImageIO.read(new File("resources/Weapon.gif"));
+                //TODO: needs an indicator for tank and adds more damage and one shots breakable walls
+                this.wall = ImageIO.read(new File("resources/PowerUp.png"));
                 this.unbreakableWall = new Map(x, y, type, this.wall);
                 b.drawImage(this.wall.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
             }catch(IOException e){
@@ -84,6 +85,7 @@ public class Map extends JPanel{
             }
         }else if(type == 1){
             try {
+                //TODO: need to make borders for this so the tank doesn't collide with it
                 this.wall = ImageIO.read(new File("resources/Wall1.gif"));
                 this.unbreakableWall = new Map(x, y, type, this.wall);
                 b.drawImage(this.wall, x, y, null);
@@ -93,6 +95,7 @@ public class Map extends JPanel{
 
         }else if(type == 2){
             try {
+                //TODO: needs to make borders and also add health to this
                 this.wall = ImageIO.read(new File("resources/Wall2.gif"));
                 this.breakableWall = new Map(x, y, type, this.wall);
                 b.drawImage(this.wall, x, y, null);
@@ -100,8 +103,9 @@ public class Map extends JPanel{
                 System.out.println("***Unable To Generate breakable Wall***");
             }
         }else if(type ==4){
+            //TODO: Prolly make this smaller to fit around the tank when it walks over it
             try {
-                this.wall = ImageIO.read(new File("resources/Shield1.gif"));
+                this.wall = ImageIO.read(new File("resources/Shield.png"));
                 this.unbreakableWall = new Map(x, y, type, this.wall);
                 b.drawImage(this.wall.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
             }catch(IOException e){
