@@ -13,8 +13,7 @@ public class Map extends JPanel{
 
     private BufferedReader mapFile;
     private static final String map1 = "src/newMap.txt";
-    private ArrayList<List<Integer>> base;
-    private ArrayList<Integer> mapA;
+    protected static ArrayList<Rectangle> mapA;
 
     BufferedImage obj;
     private int x_cord;
@@ -38,17 +37,15 @@ public class Map extends JPanel{
      */
     public void generateMap(Graphics2D b){
         try {
-            base = new ArrayList<>();
+            mapA = new ArrayList<>();
             int x = 0;
             int y = 0;
             for(int i = 0; i < 32; i ++){
                String temp;
                 while((temp = mapFile.readLine()) != null) {
-                    mapA = new ArrayList<>();
                    //System.out.println(temp);
                     for (int j = 0; j < temp.length(); j++) {
                         char c = temp.charAt(j);
-                        mapA.add(Character.getNumericValue(c));
                         //this is to draw the actual walls
                         loadMap(x, y, Character.getNumericValue(c), b);
                         x += 32;
@@ -58,9 +55,9 @@ public class Map extends JPanel{
                     y += 32;
                     x = 0;
                     System.out.println(mapA);
-                    base.add(mapA);
                 }
             }
+
 
         }catch(IOException e) {
             System.out.println("***Unable to Parse Map\n" + e);
@@ -118,7 +115,9 @@ public class Map extends JPanel{
                 System.out.println("***Unable To Generate Shield PowerUp***");
 
             }
-        }else if(type == 0){
+        }
+        if(type != 0){
+            mapA.add(boundary);
 
         }
     }
