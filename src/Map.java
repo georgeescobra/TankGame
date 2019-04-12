@@ -13,7 +13,8 @@ public class Map extends JPanel{
 
     private BufferedReader mapFile;
     private static final String map1 = "src/newMap.txt";
-    protected static ArrayList<Rectangle> mapA;
+    protected static ArrayList<Map> mapA;
+    private Map collidable;
 
     BufferedImage obj;
     private int x_cord;
@@ -25,11 +26,11 @@ public class Map extends JPanel{
         this.mapFile = new BufferedReader(new FileReader(map1));
     }
 
-    public Map(int x, int y, int type, BufferedImage img){
+    public Map(int x, int y, int type, Rectangle bound){
         this.x_cord = x;
         this.y_cord = y;
         this.kind = type;
-        this.obj = img;
+        boundary = bound;
     }
 
     /*
@@ -69,10 +70,10 @@ public class Map extends JPanel{
             try {
                 //TODO: needs an indicator for tank and adds more damage and one shots breakable walls
                 this.obj = ImageIO.read(new File("resources/PowerUp.png"));
-                Map powerUp = new Map(x, y, type, this.obj);
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
                 b.drawImage(this.obj.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
+                collidable = new Map(x, y, type, boundary);
                 b.draw(boundary);
             }catch(IOException e){
                 System.out.println("***Unable to Generate Weapon PowerUp***");
@@ -81,10 +82,10 @@ public class Map extends JPanel{
             try {
                 //TODO: need to make borders for this so the tank doesn't collide with it
                 this.obj = ImageIO.read(new File("resources/Wall1.gif"));
-                Map unbreakableWall = new Map(x, y, type, this.obj);
                 b.drawImage(this.obj, x, y, null);
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
+                collidable = new Map(x, y, type, boundary);
                 b.draw(boundary);
             }catch(IOException e){
                 System.out.println("***Unable To Generate Unbreakable Wall***");
@@ -94,10 +95,10 @@ public class Map extends JPanel{
             try {
                 //TODO: needs to make borders and also add health to this
                 this.obj = ImageIO.read(new File("resources/Wall2.gif"));
-                Map breakableWall = new Map(x, y, type, this.obj);
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
                 b.drawImage(this.obj, x, y, null);
+                collidable = new Map(x, y, type, boundary);
                 b.draw(boundary);
             }catch(IOException e){
                 System.out.println("***Unable To Generate breakable Wall***");
@@ -106,10 +107,10 @@ public class Map extends JPanel{
             //TODO: Prolly make this smaller to fit around the tank when it walks over it
             try {
                 this.obj = ImageIO.read(new File("resources/Shield.png"));
-                Map shield = new Map(x, y, type, this.obj);
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
                 b.draw(boundary);
+                collidable = new Map(x, y, type, boundary);
                 b.drawImage(this.obj.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
             }catch(IOException e){
                 System.out.println("***Unable To Generate Shield PowerUp***");
@@ -117,7 +118,7 @@ public class Map extends JPanel{
             }
         }
         if(type != 0){
-            mapA.add(boundary);
+            mapA.add(collidable);
 
         }
     }
@@ -136,9 +137,6 @@ public class Map extends JPanel{
 
     public Rectangle getWallBoundary(){return this.boundary;}
 
-    public BufferedImage getImg(){
-        return this.obj;
-    }
 
 
 }
