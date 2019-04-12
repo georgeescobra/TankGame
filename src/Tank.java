@@ -19,13 +19,13 @@ public class Tank {
     private int savey;
     private Rectangle boundary;
     private Rectangle check;
-    private Rectangle intersect;
+    private Rectangle intersectingBox;
 
     //size of tanks
     private int height = 16;
     private int width = 16;
 
-    private final int R = 2;
+    private final int R = 1;
     private final int rotationSpeed = 2;
 
     private BufferedImage img;
@@ -147,64 +147,43 @@ public class Tank {
         for(int i = 0; i < Map.mapA.size(); i++) {
             check = new Rectangle();
             check = Map.mapA.get(i);
-            if (this.getRectangle().intersects(check)) {
-                intersect = new Rectangle();
-                intersect = this.boundary.intersection(check);
-                Point tank = this.boundary.getLocation();
-                Point wall = check.getLocation();
-                Point intersectingBox = intersect.getLocation();
-                Dimension dim = intersect.getSize();
 
-                //if right of tank collides with wall to the right
-                if(tank.getX() > wall.getX() && tank.getY() < wall.getY()){
-                   y = oldy;
+            if(check.intersects(this.boundary)){
+                //System.out.println("COLLIDING WITH OBJECT!! COLLIDING WITH OBJECT!! \n");
+                intersectingBox = check.intersection(this.boundary);
+                Point topLeftTank = new Point(this.boundary.getLocation());
+                Point topRightTank = new Point((int) this.boundary.getX(), (int) this.boundary.getY() + 16);
 
-                }
-
-                //if bottom of tank collides with wall at the bottom
-                if(tank.getX() <  wall.getX() && tank.getY() > wall.getY()){
-                    Point temp = new Point((int)tank.getX() + 16, (int)tank.getY() + 16);
-                    if(check.contains(temp)) {
+                //top of box moving forward colliding with bottom of wall
+                //left of box moving to the left colliding with right of wall
+                if(check.contains(topLeftTank) || check.contains(topRightTank)){
+                    //have to check if it is moving upward or leftward
+                    //upward: I want it to go back down
+                    if(newx < oldx){
                         x = oldx;
                     }
-                    //this means if tank is colliding with the corner of a piece
-                    if(!check.contains(temp)){
-                        //this means it is moving downward
-                        if(oldx < newx){
-                            //x = x - (int) dim.getHeight();
-                            x = oldx;
-                        }
-                        //this means it is moving leftward
-                        if(oldy > newy){
-                            //y = y + (int) dim.getWidth();
-                            y = newy;
-                        }
-                    }
-                }
-
-                if((tank.getX() > wall.getX()) && (tank.getY() > wall.getY())){
-
-                    //if top of tank collides with bottom of wall
-                    Point temp = new Point((int)tank.getX(), (int)tank.getY() + 16);
-                    if(check.contains(tank) || !check.contains(temp)){
-                            System.out.println("IHSLDFJLKjslkdfjlksjfdlksjflkjsldkfsjd\n");
-                            x = x - (int) dim.getHeight();
-                    //if left of tank hits right of wall
-
-                    }else{
-                        Point botRight = new Point((int)tank.getX() + 16, (int)tank.getY());
-                        if(intersectingBox == botRight){
-                            y = newy;
-                        }else{
-                            x = oldx;
-                        }
+                    //leftward: I want it to move to the right
+                    if(newy < oldy){
+                        y = oldy;
                     }
 
-
                 }
+
+                //left of box hitting right of wall moving rightward
+                //want it to move backward to the left
+                if(!check.contains(topLeftTank) && oldy < newy){
+                    y = oldy;
+                }
+
+                //bottom of box hitting top of wall moving downward
+                //want it to go back up
+                if(!check.contains(topLeftTank) && oldx < newx){
+                    x = oldx;
+                }
+
+
+
             }
-
-
 
 //            if (x < 32) {
 //                x = 32;
