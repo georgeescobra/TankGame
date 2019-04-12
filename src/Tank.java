@@ -3,6 +3,8 @@ package src;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 
 public class Tank {
     //make tanks start at opposite corners of the map [1][1] [21][39]
@@ -11,6 +13,9 @@ public class Tank {
     private int vx;
     private int vy;
     private int angle;
+    private Rectangle boundary;
+
+    //size of tanks
     private int height = 16;
     private int width = 16;
 
@@ -30,6 +35,9 @@ public class Tank {
         this.vy = vy;
         this.img = img;
         this.angle = angle;
+        //this is 18 so when the tank rotates it is still within the rectangle
+        //got this from using pythagorean theorem on the tank
+        boundary = new Rectangle(x, y, height, width);
 
     }
 
@@ -98,6 +106,8 @@ public class Tank {
         vy = (int) Math.round(R * Math.sin(Math.toRadians(angle)));
         x -= vx;
         y -= vy;
+        this.boundary.setLocation(x, y);
+        //System.out.println(boundary.toString());
         checkBorder();
     }
 
@@ -106,6 +116,8 @@ public class Tank {
         vy = (int) Math.round(R * Math.sin(Math.toRadians(angle)));
         x += vx;
         y += vy;
+        this.boundary.setLocation(x, y);
+        //System.out.println(boundary.toString());
         checkBorder();
     }
 
@@ -113,18 +125,25 @@ public class Tank {
 
 
     private void checkBorder() {
-        if (x < 32) {
-            x = 32;
+        if(this.getRectangle().isEmpty()){
+            if (x < 32) {
+                x = 32;
+            }
+            if (x > Game.screenWidth - 48) {
+                x = Game.screenWidth - 48;
+            }
+            if (y < 32) {
+                y = 32;
+            }
+            if (y > Game.screenHeight - 64) {
+                y = Game.screenHeight - 64;
+            }
+
         }
-        if (x > Game.screenWidth - 48) {
-            x = Game.screenWidth - 48;
-        }
-        if (y < 32) {
-            y = 32;
-        }
-        if (y > Game.screenHeight - 64) {
-            y = Game.screenHeight - 64;
-        }
+        if(!this.getRectangle().isEmpty())
+            System.out.print("COLLIDE");
+
+
     }
 
     public int getX(){
@@ -142,11 +161,12 @@ public class Tank {
     public int getW(){
         return this.width;
     }
+    public Rectangle getRectangle(){return this.boundary;}
     @Override
     public String toString() {
         return "x=" + x + ", y=" + y + ", angle=" + angle;
     }
-//
+
 //    void drawImage(Graphics g) {
 //        AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
 //        rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);

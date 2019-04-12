@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
+import java.awt.Rectangle;
 import javax.imageio.ImageIO;
 
 
@@ -122,14 +123,19 @@ public class Game extends JPanel{
 
         //this got rid of trail
         //gotta learn how to do this with multiple paintComponents idk if this is correct way of doing it
+        //rotates the tank
         AffineTransform rotation = AffineTransform.getTranslateInstance(p1.getX(), p1.getY());
         rotation.rotate(Math.toRadians(p1.getAngle()), p1.getH() / 2.0, p1.getW() / 2.0);
-
-
         AffineTransform rotation2 = AffineTransform.getTranslateInstance(p2.getX(), p2.getY());
         rotation2.rotate(Math.toRadians(p2.getAngle()), p2.getH() / 2.0, p2.getW() / 2.0);
-        g2.drawImage(this.tank1.getScaledInstance(16, 16, Image.SCALE_SMOOTH), rotation, null);
-        g2.drawImage(this.tank2.getScaledInstance(16, 16, Image.SCALE_SMOOTH), rotation2, null);
+        g2.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
+        g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
+
+        g2.setColor(Color.blue);
+        g2.drawRect(p1.getX(), p1.getY(), p1.getW() , p1.getH());
+
+        g2.setColor(Color.RED);
+        g2.drawRect(p2.getX(), p2.getY(), p2.getW() , p2.getH());
 
 
     }

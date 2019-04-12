@@ -9,9 +9,9 @@ x = 40
 y = 30
 print(sys.argv)
 fName = sys.argv[1] + ".txt"
-w = "1" #unbreakable wall
+w = "1" #unbreakable obj
 g = "0" #grass
-d = "2" #breakable wall
+d = "2" #breakable obj
 
 grid = [ [None]*x for _ in range(y) ]
 
