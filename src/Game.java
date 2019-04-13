@@ -33,7 +33,7 @@ public class Game extends JPanel{
     protected boolean running = false;
     private Rectangle followP1;
     private Map map1;
-    private Graphics2D back;
+    private Graphics2D buffer;
 
     private JPanel panel1;
     private JPanel panel2;
@@ -50,7 +50,7 @@ public class Game extends JPanel{
 
 
             //Got this from stackoverflow https://stackoverflow.com/questions/10391778/create-a-bufferedimage-from-file-and-make-it-type-int-argb
-            back = this.world.createGraphics();
+            buffer = this.world.createGraphics();
 
 
             //image for the background
@@ -58,7 +58,7 @@ public class Game extends JPanel{
             BufferedImage bg = ImageIO.read(new File("resources/Background.bmp"));
             for(int i = 0; i < screenWidth; i+=320) {
                 for (int j = 0; j < screenHeight; j += 240) {
-                    back.drawImage(bg, i, j, null);
+                    buffer.drawImage(bg, i, j, null);
                 }
             }
 
@@ -68,7 +68,7 @@ public class Game extends JPanel{
             //could not find another way to make it work.
             try {
                 map1 = new Map();
-                map1.generateMap(back);
+                map1.generateMap(buffer);
             }catch(IOException e) {
                 System.out.println("***Unable to Generate Map***\n" + e);
             }
@@ -158,27 +158,45 @@ public class Game extends JPanel{
         //this got rid of trail
         //gotta learn how to do this with multiple paintComponents idk if this is correct way of doing it
         //rotates the tank
-
         AffineTransform rotation = AffineTransform.getTranslateInstance(p1.getX(), p1.getY());
         rotation.rotate(Math.toRadians(p1.getAngle()), p1.getH() / 2.0, p1.getW() / 2.0);
         AffineTransform rotation2 = AffineTransform.getTranslateInstance(p2.getX(), p2.getY());
         rotation2.rotate(Math.toRadians(p2.getAngle()), p2.getH() / 2.0, p2.getW() / 2.0);
-        g2.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
-        g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
+
 
         if (this.p1.getShieldStatus()) {
-            g2.drawImage(this.p1.getImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p1.getX() - p1.getH() / 2, p1.getY() - p1.getW() / 2, null);
-            map1.updateMap(this.p1);
-            map1.generateMap(back);
+            if(this.p1.getUpdate()) {
+                map1.updateMap(this.p1, buffer, g2, this.world);
+                this.p1.setUpdate(false);
+            }
+            g2.drawImage(this.p1.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p1.getX() - p1.getH() / 2, p1.getY() - p1.getW() / 2, null);
+        }
 
+        if (this.p2.getShieldStatus()) {
+            if(this.p2.getUpdate()) {
+                map1.updateMap(this.p2, buffer, g2, this.world);
+                this.p2.setUpdate(false);
+            }
+            g2.drawImage(this.p2.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p2.getX() - p2.getH() / 2, p2.getY() - p2.getW() / 2, null);
+        }
+
+        if (this.p1.getWeaponUpgradeStatus()){
+            if(this.p1.getUpdate()) {
+                map1.updateMap(this.p1, buffer, g2, this.world);
+                this.p1.setUpdate(false);
+            }
+        }
+
+        if (this.p2.getWeaponUpgradeStatus()){
+            if(this.p2.getUpdate()) {
+                map1.updateMap(this.p2, buffer, g2, this.world);
+                this.p2.setUpdate(false);
+            }
         }
 
 
-            if (this.p2.getShieldStatus()) {
-                g2.drawImage(this.p2.getImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p2.getX() - p2.getH() / 2, p2.getY() - p2.getW() / 2, null);
-                map1.updateMap(this.p2);
-            }
-
+        g2.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
+        g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
 
 
         g2.setColor(Color.blue);

@@ -36,6 +36,7 @@ public class Tank {
     private int health;
     private WeaponUpgrade bulletStrength;
     private Shield shield;
+    private boolean update;
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage img) {
         this.x = x;
@@ -51,6 +52,7 @@ public class Tank {
         health = 100;
         bulletStrength = new WeaponUpgrade(false);
         shield = new Shield(false);
+        update = false;
 
     }
 
@@ -192,16 +194,17 @@ public class Tank {
                 }
                 if (some.getKind() == 3 || some.getKind() == 4) {
                     //activating powerups
-                    if (!this.shield.getStatus() || !this.bulletStrength.getStatus()) {
-                        if (some.getKind() == 4) {
-                            System.out.println("HSDHDFKJSKJFHSKJD");
+                        if (some.getKind() == 4 && !this.shield.getStatus()) {
                             this.shield.setStatus(true);
                             this.img = some.getImage();
+                            this.update = true;
                         }
-                        if (some.getKind() == 3) {
+                        if (some.getKind() == 3 && !this.bulletStrength.getStatus()) {
                             this.bulletStrength.setStatus(true);
+                            this.img = some.getImage();
+                            this.update = true;
                         }
-                    }
+
 
                 }
             }
@@ -247,6 +250,8 @@ public class Tank {
     public boolean getShieldStatus(){
        return this.shield.getStatus();
     }
+    public void setUpdate(boolean up){this.update = up;}
+    public boolean getUpdate(){return this.update;}
 
     public boolean getWeaponUpgradeStatus(){
         return this.bulletStrength.getStatus();
@@ -254,6 +259,10 @@ public class Tank {
 
     public BufferedImage getImg(){
         return this.img;
+    }
+
+    public Shield getShieldObj(){
+        return this.shield;
     }
 
     public Rectangle getRectangle(){return this.boundary;}
