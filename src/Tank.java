@@ -24,7 +24,7 @@ public class Tank {
     private int height = 16;
     private int width = 16;
 
-    private final int R = 1;
+    private final double R = 1.5;
     private final int rotationSpeed = 2;
 
     private BufferedImage img;
@@ -34,8 +34,8 @@ public class Tank {
     private boolean LeftPressed;
 
     private int health;
-    private boolean shield;
-    private boolean powerUp;
+    private WeaponUpgrade bulletStrength;
+    private Shield shield;
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage img) {
         this.x = x;
@@ -49,8 +49,8 @@ public class Tank {
         boundary = new Rectangle(x, y, height, width);
         boundary.setBounds(boundary.getBounds());
         health = 100;
-        shield = false;
-        powerUp = false;
+        bulletStrength = new WeaponUpgrade(false);
+        shield = new Shield(false);
 
     }
 
@@ -155,9 +155,9 @@ public class Tank {
             Map some = Map.mapA.get(i);
             check = new Rectangle(some.getWallBoundary());
 
-            if(check.intersects(this.boundary)){
+            if(check.intersects(this.boundary)) {
                 //checks if the object is a power up or not
-                if(some.getKind() == 1 || some.getKind() == 2) {
+                if (some.getKind() == 1 || some.getKind() == 2) {
                     //System.out.println("COLLIDING WITH OBJECT!! COLLIDING WITH OBJECT!! \n");
                     Point topLeftTank = new Point(this.boundary.getLocation());
                     Point topRightTank = new Point((int) this.boundary.getX(), (int) this.boundary.getY() + 16);
@@ -188,7 +188,23 @@ public class Tank {
                     if (!check.contains(topLeftTank) && oldx < newx) {
                         x = oldx;
                     }
+
                 }
+                if (some.getKind() == 3 || some.getKind() == 4) {
+                    //activating powerups
+                    if (!this.shield.getStatus() || !this.bulletStrength.getStatus()) {
+                        if (some.getKind() == 4) {
+                            System.out.println("HSDHDFKJSKJFHSKJD");
+                            this.shield.setStatus(true);
+                            this.img = some.getImage();
+                        }
+                        if (some.getKind() == 3) {
+                            this.bulletStrength.setStatus(true);
+                        }
+                    }
+
+                }
+            }
 
 
 
@@ -208,7 +224,7 @@ public class Tank {
 //            }
 
             }
-        }
+
 
 
 
@@ -228,6 +244,18 @@ public class Tank {
     public int getW(){
         return this.width;
     }
+    public boolean getShieldStatus(){
+       return this.shield.getStatus();
+    }
+
+    public boolean getWeaponUpgradeStatus(){
+        return this.bulletStrength.getStatus();
+    }
+
+    public BufferedImage getImg(){
+        return this.img;
+    }
+
     public Rectangle getRectangle(){return this.boundary;}
     @Override
     public String toString() {

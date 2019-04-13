@@ -21,16 +21,20 @@ public class Map extends JPanel{
     private int y_cord;
     private int kind;
     private Rectangle boundary;
+    private BufferedImage image;
+    private Graphics2D use;
 
     public Map() throws IOException{
         this.mapFile = new BufferedReader(new FileReader(map1));
     }
 
-    public Map(int x, int y, int type, Rectangle bound){
+    public Map(int x, int y, int type, Rectangle bound, BufferedImage img){
         this.x_cord = x;
         this.y_cord = y;
         this.kind = type;
-        boundary = bound;
+        this.boundary = bound;
+        this.image = img;
+
     }
 
     /*
@@ -38,6 +42,7 @@ public class Map extends JPanel{
      */
     public void generateMap(Graphics2D b){
         try {
+            use = b;
             mapA = new ArrayList<>();
             int x = 0;
             int y = 0;
@@ -68,38 +73,32 @@ public class Map extends JPanel{
     public void loadMap(int x, int y, int type, Graphics2D b) {
         if(type == 3){
             try {
-                //TODO: needs an indicator for tank and adds more damage and one shots breakable walls
                 this.obj = ImageIO.read(new File("resources/PowerUp.png"));
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
                 b.drawImage(this.obj.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
-                collidable = new Map(x, y, type, boundary);
-                b.draw(boundary);
+                collidable = new Map(x, y, type, boundary, this.obj);
             }catch(IOException e){
                 System.out.println("***Unable to Generate Weapon PowerUp***");
             }
         }else if(type == 1){
             try {
-                //TODO: need to make borders for this so the tank doesn't collide with it
                 this.obj = ImageIO.read(new File("resources/Wall1.gif"));
                 b.drawImage(this.obj, x, y, null);
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
-                collidable = new Map(x, y, type, boundary);
-                b.draw(boundary);
+                collidable = new Map(x, y, type, boundary, this.obj);
             }catch(IOException e){
                 System.out.println("***Unable To Generate Unbreakable Wall***");
             }
 
         }else if(type == 2){
             try {
-                //TODO: needs to make borders and also add health to this
                 this.obj = ImageIO.read(new File("resources/Wall2.gif"));
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
                 b.drawImage(this.obj, x, y, null);
-                collidable = new Map(x, y, type, boundary);
-                b.draw(boundary);
+                collidable = new Map(x, y, type, boundary, this.obj);
             }catch(IOException e){
                 System.out.println("***Unable To Generate breakable Wall***");
             }
@@ -109,8 +108,7 @@ public class Map extends JPanel{
                 this.obj = ImageIO.read(new File("resources/Shield.png"));
                 boundary = new Rectangle(x, y, 32, 32);
                 boundary.setBounds(boundary);
-                b.draw(boundary);
-                collidable = new Map(x, y, type, boundary);
+                collidable = new Map(x, y, type, boundary, this.obj);
                 b.drawImage(this.obj.getScaledInstance(32, 32, Image.SCALE_SMOOTH), x, y, null);
             }catch(IOException e){
                 System.out.println("***Unable To Generate Shield PowerUp***");
@@ -123,7 +121,18 @@ public class Map extends JPanel{
         }
     }
 
-    public int getX(){
+    public void updateMap(Tank player){
+        for(int i = 0; i < Map.mapA.size(); i++) {
+            if(player.getImg().equals(Map.mapA.get(i))){
+              Map.mapA.get(i).setKind(0);
+             // use.drawImage(Map.mapA.get(i).getImage(), Map.mapA.get(i).getX(), Map.mapA.get(i).getY(), null);
+            }
+
+        }
+    }
+
+
+        public int getX(){
         return this.x_cord;
     }
 
@@ -134,8 +143,13 @@ public class Map extends JPanel{
     public int getKind(){
         return this.kind;
     }
+    public void setKind(int k){
+        this.kind = k;
+    }
 
     public Rectangle getWallBoundary(){return this.boundary;}
+
+    public BufferedImage getImage(){return this.image;}
 
 
 

@@ -1,6 +1,7 @@
 package src;
 
 import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.io.*;
 import java.io.IOException;
 import javax.swing.*;
@@ -17,18 +18,25 @@ import javax.imageio.ImageIO;
 public class Game extends JPanel{
 
     public static final int screenWidth = 1280;
-    public static final int screenHeight = 720;
+    public static final int screenHeight = 704;
 
-    private BufferedImage world;
-    private Graphics2D buffer;
+    private static BufferedImage world;
+    private BufferedImage p2Cam;
+    private BufferedImage p1Cam;
     private JFrame jf;
     private Tank p1;
     private Tank p2;
-    BufferedImage tank1;
-    BufferedImage tank2;
+    private BufferedImage tank1;
+    private BufferedImage tank2;
+    private BufferedImage miniMap;
     private Thread thread;
     protected boolean running = false;
+    private Rectangle followP1;
+    private Map map1;
+    private Graphics2D back;
 
+    private JPanel panel1;
+    private JPanel panel2;
 
     private void init(){
         try {
@@ -37,9 +45,13 @@ public class Game extends JPanel{
             this.jf = new JFrame("Tank Wars");
 
 
+
             this.world = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
+
+
             //Got this from stackoverflow https://stackoverflow.com/questions/10391778/create-a-bufferedimage-from-file-and-make-it-type-int-argb
-           Graphics2D back = this.world.createGraphics();
+            back = this.world.createGraphics();
+
 
             //image for the background
             //I didn't want to stretch the image so I just repeated it
@@ -55,27 +67,40 @@ public class Game extends JPanel{
             //not sure if I was supposed to pass the Graphics2D object
             //could not find another way to make it work.
             try {
-                Map map1 = new Map();
+                map1 = new Map();
                 map1.generateMap(back);
             }catch(IOException e) {
                 System.out.println("***Unable to Generate Map***\n" + e);
             }
+
+//            this.panel1 = new JPanel();
+//            panel1.setLayout(new GridBagLayout());
+//            Graphics2D camera1 = this.world.createGraphics();
+//            p1Cam = this.world.getSubimage(0, 0, screenWidth/3, 300);
+//            camera1.drawImage(p1Cam, 0 , 0, null);
+//            this.jf.add(panel1);
+
+
+            //this sets the frame
+            this.jf.setLayout(new BorderLayout());
+            this.jf.add(this);
 
             //loading the players
             try {
                 this.tank1 = ImageIO.read(new File("resources/Tank1.png"));
                 p1 = new Tank(40, 40, 1, 1, 1, this.tank1);
 
+                // p1Cam = this.world.getSubimage(followP1);
+
                 tank2 = ImageIO.read(new File("resources/Tank2.png"));
-                this.p2 = new Tank(1226, 648, 1, 1, 180, this.tank2);
+                p2 = new Tank(1226, 648, 1, 1, 180, this.tank2);
+                //p1Cam = this.world.getSubimage(, , screenWidth/2, 450);
 
             }catch(IOException e){
                 System.out.println("***Unable to Load Players***");
             }
 
-            //this sets the frame
-            this.jf.setLayout(new BorderLayout());
-            this.jf.add(this);
+
 
             TankControl tankC1 = new TankControl(p2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_ENTER);
             TankControl tankC2 = new TankControl(p1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
@@ -87,6 +112,7 @@ public class Game extends JPanel{
             jf.setLocationRelativeTo(null);
             this.jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.jf.setVisible(true);
+
 
         }catch(IOException e){
             System.out.println("***Unable to Generate Game****\n" + e);
@@ -114,22 +140,46 @@ public class Game extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        buffer = world.createGraphics();
+        //buffer = world.createGraphics();
         super.paintComponent(g2);
 
-//        this.p1.drawImage(buffer);
-//        this.p2.drawImage(buffer);
-        g2.drawImage(world,0,0,null);
+
+        g2.drawImage(this.world,0,0,null);
+
+
+        //g2.setColor(Color.YELLOW);
+       // g2.drawImage(p2Cam, 0, 0, null);
+        //g2.setColor(Color.BLUE);
+//        g2.scale(1.5, 1.5);
+//        g2.drawImage(this.p1Cam, 0, 0, null);
+
+
 
         //this got rid of trail
         //gotta learn how to do this with multiple paintComponents idk if this is correct way of doing it
         //rotates the tank
+
         AffineTransform rotation = AffineTransform.getTranslateInstance(p1.getX(), p1.getY());
         rotation.rotate(Math.toRadians(p1.getAngle()), p1.getH() / 2.0, p1.getW() / 2.0);
         AffineTransform rotation2 = AffineTransform.getTranslateInstance(p2.getX(), p2.getY());
         rotation2.rotate(Math.toRadians(p2.getAngle()), p2.getH() / 2.0, p2.getW() / 2.0);
         g2.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
         g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
+
+        if (this.p1.getShieldStatus()) {
+            g2.drawImage(this.p1.getImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p1.getX() - p1.getH() / 2, p1.getY() - p1.getW() / 2, null);
+            map1.updateMap(this.p1);
+            map1.generateMap(back);
+
+        }
+
+
+            if (this.p2.getShieldStatus()) {
+                g2.drawImage(this.p2.getImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p2.getX() - p2.getH() / 2, p2.getY() - p2.getW() / 2, null);
+                map1.updateMap(this.p2);
+            }
+
+
 
         g2.setColor(Color.blue);
         g2.drawRect(p1.getX(), p1.getY(), p1.getW() , p1.getH());
@@ -145,20 +195,20 @@ public class Game extends JPanel{
         Game newGame = new Game();
         newGame.init();
 
-           try{
-               while(newGame.running){
-                   newGame.start();
-                   newGame.p1.update();
-                   newGame.p2.update();
-                   newGame.repaint();
-                   System.out.println(newGame.p1);
-                   System.out.println(newGame.p2);
-                   Thread.sleep(1000/144);
-               }
+        try{
+            while(newGame.running){
+                newGame.start();
+                newGame.p1.update();
+                newGame.p2.update();
+                newGame.repaint();
+                System.out.println(newGame.p1);
+                System.out.println(newGame.p2);
+                Thread.sleep(1000/144);
+            }
 
-           }catch(InterruptedException ignored){
+        }catch(InterruptedException ignored){
 
-           }
+        }
 
 
     }

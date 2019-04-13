@@ -1,13 +1,18 @@
 package src;
 
 public class Shield extends PowerUp {
+    private boolean status;
+
+    Shield(boolean stat){
+        this.status = false;
+    }
     @Override
     public boolean getStatus() {
-        return false;
+        return this.status;
     }
 
     @Override
-    public boolean setStatus() {
-        return false;
+    public boolean setStatus(boolean toSet) {
+        return this.status = toSet;
     }
 }

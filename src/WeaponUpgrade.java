@@ -1,13 +1,18 @@
 package src;
 
 public class WeaponUpgrade extends PowerUp {
+    private boolean status;
+
+    WeaponUpgrade (boolean stat){
+        this.status = stat;
+    }
     @Override
     public boolean getStatus() {
-        return false;
+        return this.status;
     }
 
     @Override
-    public boolean setStatus() {
-        return false;
+    public boolean setStatus(boolean toSet) {
+        return this.status = toSet;
     }
 }
