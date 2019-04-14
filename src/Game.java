@@ -81,7 +81,7 @@ public class Game extends JPanel{
             try {
 
                 this.tank1 = ImageIO.read(new File("resources/Tank1.png"));
-                p1 = new Tank(40, 40, 1, 1, 1, this.tank1);
+                p1 = new Tank(40, 40, 1, 1, 0, this.tank1);
                 p1.addTank(p1);
 
                 tank2 = ImageIO.read(new File("resources/Tank2.png"));
@@ -191,7 +191,10 @@ public class Game extends JPanel{
         g2.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
         g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
 
-
+        if(p1.shootPressed()){
+           BufferedImage bullet = p1.shoot(buffer, this.world, g2);
+           g2.drawImage(bullet, p1.getX(), p1.getY(), null);
+        }
         g2.setColor(Color.blue);
         g2.drawRect(p1.getX(), p1.getY(), p1.getW() , p1.getH());
 

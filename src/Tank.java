@@ -1,15 +1,18 @@
 package src;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Tank {
     private int x;
     private int y;
-    private int vx;
-    private int vy;
+    private float vx;
+    private float vy;
     private int angle;
     private int savex;
     private int savey;
@@ -34,6 +37,7 @@ public class Tank {
     private WeaponUpgrade bulletStrength;
     private Shield shield;
     private boolean update;
+    private BufferedImage bullet;
 
     private static ArrayList<Tank> numTanks = new ArrayList<>();
 
@@ -88,6 +92,8 @@ public class Tank {
     }
 
     void unToggleShootPressed() {this.ShootPressed = false;}
+
+    public boolean shootPressed(){return this.ShootPressed;}
 
 
 
@@ -255,6 +261,19 @@ public class Tank {
             }
 
             }
+    public BufferedImage shoot(Graphics2D buff, BufferedImage world, Graphics2D g) {
+        try{
+            bullet = ImageIO.read(new File("/resources/Bullet.png"));
+            Rectangle hitting = new Rectangle(this.getX(), this.getY(), 32, 32);
+//            buff.drawImage(bullet, this.getX(),  this.getY(), null);
+//            g.drawImage(world, this.getX(), this.getY(), null);
+            System.out.println("SHOOOOOOOOOOOOOOOOOOOOOOOOT");
+
+        }catch(IOException e){
+            System.out.println("***ERROR SHOOTING SHOT***");
+        }
+        return bullet;
+    }
 
 
 
