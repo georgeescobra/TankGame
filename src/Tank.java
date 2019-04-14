@@ -1,16 +1,11 @@
 package src;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.geom.RectangularShape;
-import java.awt.geom.Dimension2D;
 import java.awt.Rectangle;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Tank {
-    //make tanks start at opposite corners of the map [1][1] [21][39]
     private int x;
     private int y;
     private int vx;
@@ -33,6 +28,7 @@ public class Tank {
     private boolean DownPressed;
     private boolean RightPressed;
     private boolean LeftPressed;
+    private boolean ShootPressed;
 
     private int health;
     private WeaponUpgrade bulletStrength;
@@ -48,8 +44,6 @@ public class Tank {
         this.vy = vy;
         this.img = img;
         this.angle = angle;
-        //this is 18 so when the tank rotates it is still within the rectangle
-        //got this from using pythagorean theorem on the tank
         boundary = new Rectangle(x, y, height, width);
         boundary.setBounds(boundary.getBounds());
         health = 100;
@@ -75,6 +69,8 @@ public class Tank {
         this.LeftPressed = true;
     }
 
+    void toggleShootPressed() {this.ShootPressed = true;}
+
     void unToggleUpPressed() {
         this.UpPressed = false;
     }
@@ -90,6 +86,8 @@ public class Tank {
     void unToggleLeftPressed() {
         this.LeftPressed = false;
     }
+
+    void unToggleShootPressed() {this.ShootPressed = false;}
 
 
 
@@ -107,6 +105,10 @@ public class Tank {
         if (this.RightPressed) {
             this.rotateRight();
         }
+        if (this.ShootPressed) {
+            //shoot
+        }
+
 
 
     }
@@ -131,7 +133,6 @@ public class Tank {
         this.boundary.setLocation(x, y);
         this.boundary.setBounds(boundary.getBounds());
 
-        //System.out.println(boundary.toString());
         checkBorder(savex, savey, x, y);
     }
 
@@ -147,7 +148,6 @@ public class Tank {
 
         this.boundary.setLocation(x, y);
         this.boundary.setBounds(boundary.getBounds());
-        //System.out.println(boundary.toString());
         checkBorder(savex, savey, x, y);
     }
 
@@ -163,7 +163,6 @@ public class Tank {
             if(check.intersects(this.boundary)) {
                 //checks if the object is a power up or not
                 if (some.getKind() == 1 || some.getKind() == 2) {
-                    //System.out.println("COLLIDING WITH OBJECT!! COLLIDING WITH OBJECT!! \n");
                     Point topLeftTank = new Point(this.boundary.getLocation());
                     Point topRightTank = new Point((int) this.boundary.getX(), (int) this.boundary.getY() + 16);
 
@@ -209,8 +208,8 @@ public class Tank {
 
                 }
             }
-            //this is for tank collision
 
+                   //for tank collision
                     int num = numTanks.indexOf(this);
                     int other;
                     other = (num == 1) ? 0  : 1;
@@ -219,8 +218,8 @@ public class Tank {
                         Point topLeftTank = new Point(this.boundary.getLocation());
                         Point topRightTank = new Point((int) this.boundary.getX(), (int) this.boundary.getY() + 16);
 
-                        //top of box moving forward colliding with bottom of wall
-                        //left of box moving to the left colliding with right of wall
+                        //top of box moving forward colliding with bottom of TANK
+                        //left of box moving to the left colliding with right of TANK
 
                         if (check.contains(topLeftTank) || check.contains(topRightTank)) {
                             //have to check if it is moving upward or leftward
@@ -235,13 +234,13 @@ public class Tank {
 
                         }
 
-                        //left of box hitting right of wall moving rightward
+                        //left of box hitting right of TANK moving rightward
                         //want it to move backward to the left
                         if (!check.contains(topLeftTank) && oldy < newy) {
                             y = oldy;
                         }
 
-                        //bottom of box hitting top of wall moving downward
+                        //bottom of box hitting top of TNAK moving downward
                         //want it to go back up
                         if (!check.contains(topLeftTank) && oldx < newx) {
                             x = oldx;
@@ -254,19 +253,6 @@ public class Tank {
 
 
             }
-
-//            if (x < 32) {
-//                x = 32;
-//            }
-//            if (x > Game.screenWidth - 48) {
-//                x = Game.screenWidth - 48;
-//            }
-//            if (y < 32) {
-//                y = 32;
-//            }
-//            if (y > Game.screenHeight - 64) {
-//                y = Game.screenHeight - 64;
-//            }
 
             }
 
@@ -317,12 +303,5 @@ public class Tank {
         return "x=" + x + ", y=" + y + ", angle=" + angle;
     }
 
-
-//    void drawImage(Graphics g) {
-//        AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
-//        rotation.rotate(Math.toRadians(angle), this.img.getWidth() / 2.0, this.img.getHeight() / 2.0);
-//        Graphics2D g2d = (Graphics2D) g;
-//        g2d.drawImage(this.img.getScaledInstance(16, 16, Image.SCALE_SMOOTH), rotation, null);
-//    }
 
 }

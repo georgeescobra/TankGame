@@ -1,7 +1,6 @@
 package src;
 
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.io.*;
 import java.io.IOException;
 import javax.swing.*;
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Objects;
 import java.awt.Rectangle;
 import javax.imageio.ImageIO;
 
@@ -73,12 +71,6 @@ public class Game extends JPanel{
                 System.out.println("***Unable to Generate Map***\n" + e);
             }
 
-//            this.panel1 = new JPanel();
-//            panel1.setLayout(new GridBagLayout());
-//            Graphics2D camera1 = this.world.createGraphics();
-//            p1Cam = this.world.getSubimage(0, 0, screenWidth/3, 300);
-//            camera1.drawImage(p1Cam, 0 , 0, null);
-//            this.jf.add(panel1);
 
 
             //this sets the frame
@@ -91,12 +83,10 @@ public class Game extends JPanel{
                 this.tank1 = ImageIO.read(new File("resources/Tank1.png"));
                 p1 = new Tank(40, 40, 1, 1, 1, this.tank1);
                 p1.addTank(p1);
-                // p1Cam = this.world.getSubimage(followP1);
 
                 tank2 = ImageIO.read(new File("resources/Tank2.png"));
                 p2 = new Tank(1226, 648, 1, 1, 180, this.tank2);
                 p2.addTank(p2);
-                //p1Cam = this.world.getSubimage(, , screenWidth/2, 450);
 
             }catch(IOException e){
                 System.out.println("***Unable to Load Players***");
@@ -142,7 +132,8 @@ public class Game extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        //buffer = world.createGraphics();
+        //Creates a Graphics2D, which can be used to draw into this BufferedImage.
+        buffer = world.createGraphics();
         super.paintComponent(g2);
 
 

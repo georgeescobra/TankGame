@@ -2,7 +2,6 @@ package src;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.io.IOException;
 import javax.swing.*;
 import java.awt.*;
@@ -103,7 +102,6 @@ public class Map extends JPanel{
                 System.out.println("***Unable To Generate breakable Wall***");
             }
         }else if(type == 4){
-            //TODO: Prolly make this smaller to fit around the tank when it walks over it
             try {
                 this.obj = ImageIO.read(new File("resources/Shield.png"));
                 boundary = new Rectangle(x, y, 32, 32);
@@ -165,10 +163,6 @@ public class Map extends JPanel{
     public int getKind(){
         return this.kind;
     }
-    public void setKind(int k){
-        this.kind = k;
-    }
-
 
     public Rectangle getWallBoundary(){return this.boundary;}
 
