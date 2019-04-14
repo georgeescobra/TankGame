@@ -87,13 +87,15 @@ public class Game extends JPanel{
 
             //loading the players
             try {
+
                 this.tank1 = ImageIO.read(new File("resources/Tank1.png"));
                 p1 = new Tank(40, 40, 1, 1, 1, this.tank1);
-
+                p1.addTank(p1);
                 // p1Cam = this.world.getSubimage(followP1);
 
                 tank2 = ImageIO.read(new File("resources/Tank2.png"));
                 p2 = new Tank(1226, 648, 1, 1, 180, this.tank2);
+                p2.addTank(p2);
                 //p1Cam = this.world.getSubimage(, , screenWidth/2, 450);
 
             }catch(IOException e){

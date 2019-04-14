@@ -7,6 +7,7 @@ import java.awt.geom.RectangularShape;
 import java.awt.geom.Dimension2D;
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Tank {
     //make tanks start at opposite corners of the map [1][1] [21][39]
@@ -37,6 +38,8 @@ public class Tank {
     private WeaponUpgrade bulletStrength;
     private Shield shield;
     private boolean update;
+
+    private static ArrayList<Tank> numTanks = new ArrayList<>();
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage img) {
         this.x = x;
@@ -176,9 +179,7 @@ public class Tank {
                         if (newy < oldy) {
                             y = oldy;
                         }
-
                     }
-
                     //left of box hitting right of wall moving rightward
                     //want it to move backward to the left
                     if (!check.contains(topLeftTank) && oldy < newy) {
@@ -207,6 +208,47 @@ public class Tank {
 
 
                 }
+            }
+            //this is for tank collision
+
+                    int num = numTanks.indexOf(this);
+                    int other;
+                    other = (num == 1) ? 0  : 1;
+                    check = numTanks.get(other).getRectangle();
+                    if (check.intersects(this.boundary)) {
+                        Point topLeftTank = new Point(this.boundary.getLocation());
+                        Point topRightTank = new Point((int) this.boundary.getX(), (int) this.boundary.getY() + 16);
+
+                        //top of box moving forward colliding with bottom of wall
+                        //left of box moving to the left colliding with right of wall
+
+                        if (check.contains(topLeftTank) || check.contains(topRightTank)) {
+                            //have to check if it is moving upward or leftward
+                            //upward: I want it to go back down
+                            if (newx < oldx) {
+                                x = oldx;
+                            }
+                            //leftward: I want it to move to the right
+                            if (newy < oldy) {
+                                y = oldy;
+                            }
+
+                        }
+
+                        //left of box hitting right of wall moving rightward
+                        //want it to move backward to the left
+                        if (!check.contains(topLeftTank) && oldy < newy) {
+                            y = oldy;
+                        }
+
+                        //bottom of box hitting top of wall moving downward
+                        //want it to go back up
+                        if (!check.contains(topLeftTank) && oldx < newx) {
+                            x = oldx;
+                        }
+
+
+
             }
 
 
@@ -263,6 +305,10 @@ public class Tank {
 
     public Shield getShieldObj(){
         return this.shield;
+    }
+
+    public void addTank(Tank p){
+        numTanks.add(p);
     }
 
     public Rectangle getRectangle(){return this.boundary;}
