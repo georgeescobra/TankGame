@@ -9,7 +9,7 @@ public class Shield extends PowerUp {
     private boolean status;
     private BufferedImage temp;
 
-    Shield(boolean stat){
+    public Shield(boolean stat){
         this.status = false;
     }
     @Override

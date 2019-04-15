@@ -192,9 +192,14 @@ public class Game extends JPanel{
         g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
 
         if(p1.shootPressed()){
-           BufferedImage bullet = p1.shoot(buffer, this.world, g2);
-           g2.drawImage(bullet, p1.getX(), p1.getY(), null);
+           Bullet bull =  p1.shoot();
+           for(int i = 0; i < 20; i ++) {
+               map1.drawBullet(buffer, bull, rotation, p1);
+               g2.drawImage(this.world, 0, 0, null);
+           }
+
         }
+
         g2.setColor(Color.blue);
         g2.drawRect(p1.getX(), p1.getY(), p1.getW() , p1.getH());
 

@@ -14,8 +14,11 @@ public class Tank {
     private float vx;
     private float vy;
     private int angle;
+    //helper variables to know which direction the tank is moving
     private int savex;
     private int savey;
+
+    //for collision
     private Rectangle boundary;
     private Rectangle check;
 
@@ -23,7 +26,7 @@ public class Tank {
     private int height = 16;
     private int width = 16;
 
-    private final double R = 1.5;
+    private final double R = 1;
     private final int rotationSpeed = 2;
 
     private BufferedImage img;
@@ -37,7 +40,8 @@ public class Tank {
     private WeaponUpgrade bulletStrength;
     private Shield shield;
     private boolean update;
-    private BufferedImage bullet;
+    private BufferedImage projectile;
+    private Bullet bullet;
 
     private static ArrayList<Tank> numTanks = new ArrayList<>();
 
@@ -111,20 +115,25 @@ public class Tank {
         if (this.RightPressed) {
             this.rotateRight();
         }
-        if (this.ShootPressed) {
-            //shoot
-        }
-
-
 
     }
 
     private void rotateLeft() {
-        this.angle -= this.rotationSpeed;
+        if(this.angle < 0) {
+            this.angle += 360;
+            this.angle -= this.rotationSpeed;
+        }else{
+            this.angle -= this.rotationSpeed;
+        }
     }
 
     private void rotateRight() {
-        this.angle += this.rotationSpeed;
+        if(this.angle > 360) {
+            this.angle -= 360;
+            this.angle += this.rotationSpeed;
+        }else{
+            this.angle += this.rotationSpeed;
+        }
     }
 
     private void moveBackwards() {
@@ -261,12 +270,13 @@ public class Tank {
             }
 
             }
-    public BufferedImage shoot(Graphics2D buff, BufferedImage world, Graphics2D g) {
+    public Bullet shoot() {
         try{
-            bullet = ImageIO.read(new File("/resources/Bullet.png"));
-            Rectangle hitting = new Rectangle(this.getX(), this.getY(), 32, 32);
+            projectile = ImageIO.read(new File("resources/Bullet.png"));
+            //Rectangle hitting = new Rectangle(this.getX(), this.getY(), 32, 32);
 //            buff.drawImage(bullet, this.getX(),  this.getY(), null);
 //            g.drawImage(world, this.getX(), this.getY(), null);
+            bullet = new Bullet(this.getX(), this.getY(), projectile, this);
             System.out.println("SHOOOOOOOOOOOOOOOOOOOOOOOOT");
 
         }catch(IOException e){

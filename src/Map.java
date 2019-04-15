@@ -1,5 +1,7 @@
 package src;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.io.*;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -167,6 +169,15 @@ public class Map extends JPanel{
     public Rectangle getWallBoundary(){return this.boundary;}
 
     public BufferedImage getImage(){return this.image;}
+
+    public void drawBullet(Graphics2D buff, Bullet bullet, AffineTransform rotation, Tank tank){
+        bullet.direction();
+//        rotation.rotate(Math.toRadians(bullet.getAngle()), bullet.getH() / 2.0, bullet.getW() / 2.0);
+        double rotated = Math.toRadians(bullet.getAngle());
+        AffineTransform tx = AffineTransform.getRotateInstance(rotated, tank.getW() / 2, tank.getH() / 2);
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+        buff.drawImage(op.filter(bullet.getImg(), null), bullet.getX(), bullet.getY(), null);
+    }
 
 
 }
