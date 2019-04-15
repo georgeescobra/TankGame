@@ -11,7 +11,7 @@ public class Bullet {
     private int vx;
     private int vy;
     private int angle;
-    private int R = 2;
+    private int R = 7;
     private int dmgToOtherTank = 10;
     private Rectangle boundary;
     private boolean hitSomething;

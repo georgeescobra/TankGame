@@ -273,12 +273,7 @@ public class Tank {
     public Bullet shoot() {
         try{
             projectile = ImageIO.read(new File("resources/Bullet.png"));
-            //Rectangle hitting = new Rectangle(this.getX(), this.getY(), 32, 32);
-//            buff.drawImage(bullet, this.getX(),  this.getY(), null);
-//            g.drawImage(world, this.getX(), this.getY(), null);
             bullet = new Bullet(this.getX(), this.getY(), projectile, this);
-            System.out.println("SHOOOOOOOOOOOOOOOOOOOOOOOOT");
-
         }catch(IOException e){
             System.out.println("***ERROR SHOOTING SHOT***");
         }
@@ -327,10 +322,10 @@ public class Tank {
     }
 
     public Rectangle getRectangle(){return this.boundary;}
-    @Override
-    public String toString() {
-        return "x=" + x + ", y=" + y + ", angle=" + angle;
-    }
+//    @Override
+//    public String toString() {
+//        return "x=" + x + ", y=" + y + ", angle=" + angle;
+//    }
 
 
 }

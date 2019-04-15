@@ -18,9 +18,12 @@ public class Game extends JPanel{
     public static final int screenWidth = 1280;
     public static final int screenHeight = 704;
 
-    private static BufferedImage world;
+    private BufferedImage world;
+    private BufferedImage lastWorld;
+    public static Game newGame;
     private BufferedImage p2Cam;
     private BufferedImage p1Cam;
+    protected Bullet bull;
     private JFrame jf;
     private Tank p1;
     private Tank p2;
@@ -32,6 +35,7 @@ public class Game extends JPanel{
     private Rectangle followP1;
     private Map map1;
     private Graphics2D buffer;
+
 
     private JPanel panel1;
     private JPanel panel2;
@@ -45,7 +49,6 @@ public class Game extends JPanel{
 
 
             this.world = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
-
 
             //Got this from stackoverflow https://stackoverflow.com/questions/10391778/create-a-bufferedimage-from-file-and-make-it-type-int-argb
             buffer = this.world.createGraphics();
@@ -93,7 +96,7 @@ public class Game extends JPanel{
             }
 
 
-
+            this.lastWorld = this.world;
             TankControl tankC1 = new TankControl(p2, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_ENTER);
             TankControl tankC2 = new TankControl(p1, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
 
@@ -140,6 +143,7 @@ public class Game extends JPanel{
         g2.drawImage(this.world,0,0,null);
 
 
+
         //g2.setColor(Color.YELLOW);
        // g2.drawImage(p2Cam, 0, 0, null);
         //g2.setColor(Color.BLUE);
@@ -160,6 +164,8 @@ public class Game extends JPanel{
         if (this.p1.getShieldStatus()) {
             if(this.p1.getUpdate()) {
                 map1.updateMap(this.p1, buffer, g2, this.world);
+                newGame.repaint();
+                this.lastWorld = this.world;
                 this.p1.setUpdate(false);
             }
             g2.drawImage(this.p1.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p1.getX() - p1.getH() / 2, p1.getY() - p1.getW() / 2, null);
@@ -168,6 +174,7 @@ public class Game extends JPanel{
         if (this.p2.getShieldStatus()) {
             if(this.p2.getUpdate()) {
                 map1.updateMap(this.p2, buffer, g2, this.world);
+                this.lastWorld = this.world;
                 this.p2.setUpdate(false);
             }
             g2.drawImage(this.p2.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p2.getX() - p2.getH() / 2, p2.getY() - p2.getW() / 2, null);
@@ -176,6 +183,7 @@ public class Game extends JPanel{
         if (this.p1.getWeaponUpgradeStatus()){
             if(this.p1.getUpdate()) {
                 map1.updateMap(this.p1, buffer, g2, this.world);
+                this.lastWorld = this.world;
                 this.p1.setUpdate(false);
             }
         }
@@ -183,22 +191,24 @@ public class Game extends JPanel{
         if (this.p2.getWeaponUpgradeStatus()){
             if(this.p2.getUpdate()) {
                 map1.updateMap(this.p2, buffer, g2, this.world);
+                this.lastWorld = this.world;
                 this.p2.setUpdate(false);
             }
         }
 
+        if(p1.shootPressed()){
+
+            bull =  p1.shoot();
+            map1.drawBullet(buffer, bull, p1);
+            g2.drawImage(this.lastWorld, 0 ,0 , null);
+
+        }
 
         g2.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
         g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
 
-        if(p1.shootPressed()){
-           Bullet bull =  p1.shoot();
-           for(int i = 0; i < 20; i ++) {
-               map1.drawBullet(buffer, bull, rotation, p1);
-               g2.drawImage(this.world, 0, 0, null);
-           }
 
-        }
+
 
         g2.setColor(Color.blue);
         g2.drawRect(p1.getX(), p1.getY(), p1.getW() , p1.getH());
@@ -211,7 +221,7 @@ public class Game extends JPanel{
 
 
     public static void main(String[] args) {
-        Game newGame = new Game();
+        newGame = new Game();
         newGame.init();
 
         try{

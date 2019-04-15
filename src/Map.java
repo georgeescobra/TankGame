@@ -139,8 +139,6 @@ public class Map extends JPanel{
             System.out.println("***Can't regenerate Map***");
         }
 
-        uni.drawImage(world, 0 ,0, null );
-
         for(int j = 0; j < Map.mapA.size(); j++){
             if(Map.mapA.get(j).getKind() != 0){
                 if(Map.mapA.get(j).getKind() == 3 || Map.mapA.get(j).getKind() == 4){
@@ -170,13 +168,16 @@ public class Map extends JPanel{
 
     public BufferedImage getImage(){return this.image;}
 
-    public void drawBullet(Graphics2D buff, Bullet bullet, AffineTransform rotation, Tank tank){
-        bullet.direction();
-//        rotation.rotate(Math.toRadians(bullet.getAngle()), bullet.getH() / 2.0, bullet.getW() / 2.0);
-        double rotated = Math.toRadians(bullet.getAngle());
-        AffineTransform tx = AffineTransform.getRotateInstance(rotated, tank.getW() / 2, tank.getH() / 2);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        buff.drawImage(op.filter(bullet.getImg(), null), bullet.getX(), bullet.getY(), null);
+    public void drawBullet(Graphics2D buff, Bullet bullet, Tank tank){
+        for(int i = 0; i < 20; i ++) {
+            bullet.direction();
+            double rotated = Math.toRadians(bullet.getAngle());
+            AffineTransform tx = AffineTransform.getRotateInstance(rotated, tank.getW() / 2, tank.getH() / 2);
+            AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+            buff.drawImage(op.filter(bullet.getImg(), null), bullet.getX(), bullet.getY(), null);
+        }
+
+
     }
 
 
