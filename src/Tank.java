@@ -346,6 +346,7 @@ public class Tank {
     public int getHealth(){
         return this.healthOfTank.getHealth();
     }
+    public BufferedImage getHealthBar(){return this.healthOfTank.getHealthBar();}
     public void setShieldStatus(boolean s){
         this.shield.setStatus(s);
     }

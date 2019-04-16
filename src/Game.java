@@ -220,17 +220,21 @@ public class Game extends JPanel{
         buffer.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
         buffer.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
 
+        buffer.drawImage(p1.getHealthBar().getScaledInstance(p1.getW(), 20, Image.SCALE_SMOOTH), p1.getX(), p1.getY() + 6, null);
+        buffer.drawImage(p2.getHealthBar().getScaledInstance(p2.getW(), 20, Image.SCALE_SMOOTH), p2.getX(), p2.getY() + 6, null);
+
+
         if(p1.getHealth() <= 0 || p2.getHealth() <= 0) {
             //show the game over screen
             try {
                 BufferedImage over = ImageIO.read(new File("resources/game.png"));
                 buffer.drawImage(over, 0, 0, null);
                 g2.drawImage(this.world, 0, 0, null);
+                return;
             } catch (IOException E) {
 
             }
         }
-
 
 
 //        buffer.setColor(Color.blue);
