@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="csc413-tankgame-georgeescobra:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/csc413_tankgame_georgeescobra_jar</output-path>
+    <root id="archive" name="csc413-tankgame-georgeescobra.jar">
+      <element id="module-output" name="csc413-tankgame-georgeescobra" />
+    </root>
+  </artifact>
+</component>
