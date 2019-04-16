@@ -136,11 +136,12 @@ public class Game extends JPanel{
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         //Creates a Graphics2D, which can be used to draw into this BufferedImage.
+       // this.world = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
         buffer = world.createGraphics();
         super.paintComponent(g2);
 
 
-        g2.drawImage(this.world,0,0,null);
+       // g2.drawImage(this.world,0,0,null);
 
 
 
@@ -163,26 +164,26 @@ public class Game extends JPanel{
 
         if (this.p1.getShieldStatus()) {
             if(this.p1.getUpdate()) {
-                map1.updateMap(this.p1, buffer, g2, this.world);
-                newGame.repaint();
                 this.lastWorld = this.world;
+                map1.updateMap(this.p1, buffer);
                 this.p1.setUpdate(false);
             }
-            g2.drawImage(this.p1.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p1.getX() - p1.getH() / 2, p1.getY() - p1.getW() / 2, null);
+            g2.drawImage(this.lastWorld, 0 ,0 ,null);
+            buffer.drawImage(this.p1.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p1.getX() - p1.getH() / 2, p1.getY() - p1.getW() / 2, null);
         }
 
         if (this.p2.getShieldStatus()) {
             if(this.p2.getUpdate()) {
-                map1.updateMap(this.p2, buffer, g2, this.world);
                 this.lastWorld = this.world;
+                map1.updateMap(this.p2, buffer);
                 this.p2.setUpdate(false);
             }
-            g2.drawImage(this.p2.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p2.getX() - p2.getH() / 2, p2.getY() - p2.getW() / 2, null);
+            buffer.drawImage(this.p2.getShieldObj().getShieldImg().getScaledInstance(30, 30, Image.SCALE_SMOOTH), p2.getX() - p2.getH() / 2, p2.getY() - p2.getW() / 2, null);
         }
 
         if (this.p1.getWeaponUpgradeStatus()){
             if(this.p1.getUpdate()) {
-                map1.updateMap(this.p1, buffer, g2, this.world);
+                map1.updateMap(this.p1, buffer);
                 this.lastWorld = this.world;
                 this.p1.setUpdate(false);
             }
@@ -190,33 +191,43 @@ public class Game extends JPanel{
 
         if (this.p2.getWeaponUpgradeStatus()){
             if(this.p2.getUpdate()) {
-                map1.updateMap(this.p2, buffer, g2, this.world);
+                map1.updateMap(this.p2, buffer);
                 this.lastWorld = this.world;
                 this.p2.setUpdate(false);
             }
         }
 
         if(p1.shootPressed()){
-
-            bull =  p1.shoot();
-            map1.drawBullet(buffer, bull, p1);
-            g2.drawImage(this.lastWorld, 0 ,0 , null);
+            p1.shoot();
+            p1.drawBullet(buffer, g2, this.world);
+            map1.updateMap(p1, buffer);
+            this.lastWorld = this.world;
+            p1.unToggleShootPressed();
 
         }
 
-        g2.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
-        g2.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
+        if(p2.shootPressed()){
+            p2.shoot();
+            p2.drawBullet(buffer, g2, this.world);
+            map1.updateMap(p2, buffer);
+            this.lastWorld = this.world;
+            p2.unToggleShootPressed();
+
+        }
+
+        buffer.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
+        buffer.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
 
 
 
 
-        g2.setColor(Color.blue);
-        g2.drawRect(p1.getX(), p1.getY(), p1.getW() , p1.getH());
+//        buffer.setColor(Color.blue);
+//        buffer.drawRect(p1.getX(), p1.getY(), p1.getW() , p1.getH());
+//
+//        buffer.setColor(Color.RED);
+//        buffer.drawRect(p2.getX(), p2.getY(), p2.getW() , p2.getH());
 
-        g2.setColor(Color.RED);
-        g2.drawRect(p2.getX(), p2.getY(), p2.getW() , p2.getH());
-
-
+        g2.drawImage(this.lastWorld,0,0,null);
     }
 
 
@@ -230,10 +241,16 @@ public class Game extends JPanel{
                 newGame.p1.update();
                 newGame.p2.update();
                 newGame.repaint();
+                if(newGame.p1.getHealth() <= 0 || newGame.p2.getHealth() <= 0){
+                    //show the game over screen
+                    break;
+                }
                 System.out.println(newGame.p1);
                 System.out.println(newGame.p2);
                 Thread.sleep(1000/144);
             }
+            System.out.println("GAAAAAAME OOOOOVERRR");
+
 
         }catch(InterruptedException ignored){
 

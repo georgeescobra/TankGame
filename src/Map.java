@@ -122,7 +122,7 @@ public class Map extends JPanel{
         }
     }
 
-    public void updateMap(Tank player, Graphics2D buffer, Graphics2D uni, BufferedImage world ){
+    public void updateMap(Tank player, Graphics2D buffer){
         for(int i = 0; i < Map.mapA.size(); i++) {
             if(player.getImg().equals(Map.mapA.get(i).getImage())){
                 Map.mapA.remove(i);
@@ -148,7 +148,6 @@ public class Map extends JPanel{
                 }
             }
         }
-        uni.drawImage(world, 0 ,0, null );
     }
 
 
@@ -167,18 +166,6 @@ public class Map extends JPanel{
     public Rectangle getWallBoundary(){return this.boundary;}
 
     public BufferedImage getImage(){return this.image;}
-
-    public void drawBullet(Graphics2D buff, Bullet bullet, Tank tank){
-        for(int i = 0; i < 20; i ++) {
-            bullet.direction();
-            double rotated = Math.toRadians(bullet.getAngle());
-            AffineTransform tx = AffineTransform.getRotateInstance(rotated, tank.getW() / 2, tank.getH() / 2);
-            AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-            buff.drawImage(op.filter(bullet.getImg(), null), bullet.getX(), bullet.getY(), null);
-        }
-
-
-    }
 
 
 }

@@ -2,6 +2,8 @@ package src;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
 import java.io.File;
@@ -36,14 +38,15 @@ public class Tank {
     private boolean LeftPressed;
     private boolean ShootPressed;
 
-    private int health;
     private WeaponUpgrade bulletStrength;
     private Shield shield;
     private boolean update;
     private BufferedImage projectile;
     private Bullet bullet;
+    private Health healthOfTank;
 
-    private static ArrayList<Tank> numTanks = new ArrayList<>();
+    protected static ArrayList<Tank> numTanks = new ArrayList<>();
+    private  ArrayList<Bullet> ammo = new ArrayList<>();
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage img) {
         this.x = x;
@@ -54,7 +57,7 @@ public class Tank {
         this.angle = angle;
         boundary = new Rectangle(x, y, height, width);
         boundary.setBounds(boundary.getBounds());
-        health = 100;
+        healthOfTank = new Health(100);
         bulletStrength = new WeaponUpgrade(false);
         shield = new Shield(false);
         update = false;
@@ -115,6 +118,7 @@ public class Tank {
         if (this.RightPressed) {
             this.rotateRight();
         }
+
 
     }
 
@@ -270,14 +274,31 @@ public class Tank {
             }
 
             }
-    public Bullet shoot() {
+    public void shoot() {
         try{
             projectile = ImageIO.read(new File("resources/Bullet.png"));
             bullet = new Bullet(this.getX(), this.getY(), projectile, this);
+            this.ammo.add(bullet);
         }catch(IOException e){
             System.out.println("***ERROR SHOOTING SHOT***");
         }
-        return bullet;
+    }
+
+    public void drawBullet(Graphics2D buffer, Graphics2D g2, BufferedImage world){
+        for(int i = 0; i < ammo.size(); i++) {
+            Bullet bull = ammo.get(i);
+            while(!bull.gethasHit()) {
+                bull.direction();
+                double rotated = Math.toRadians(bull.getAngle());
+                AffineTransform tx = AffineTransform.getRotateInstance(rotated, bull.getW() / 2, bull.getH() / 2);
+                AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+                buffer.drawImage(op.filter(bull.getImg(), null), bull.getX(), bull.getY(), null);
+                g2.drawImage(world, 0 ,0, null);
+                bull.hasHit();
+            }
+            ammo.remove(i);
+        }
+
     }
 
 
@@ -321,11 +342,20 @@ public class Tank {
         numTanks.add(p);
     }
 
+    public void updateHealth(int j){
+        this.healthOfTank.updateHealth(j);
+    }
+    public int getHealth(){
+        return this.healthOfTank.getHealth();
+    }
+
     public Rectangle getRectangle(){return this.boundary;}
-//    @Override
-//    public String toString() {
-//        return "x=" + x + ", y=" + y + ", angle=" + angle;
-//    }
+
+
+    @Override
+    public String toString() {
+        return "x=" + x + ", y=" + y + ", angle=" + angle;
+    }
 
 
 }
