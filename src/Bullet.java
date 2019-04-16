@@ -25,6 +25,7 @@ public class Bullet {
     private BufferedImage img;
 
     public Bullet(int x, int y, BufferedImage bullet, Tank player){
+
         this.x = x;
         this.y = y;
         PowerUp = player.getWeaponUpgradeStatus();
@@ -32,7 +33,7 @@ public class Bullet {
             dmgToOtherTank = 20;
         }
         boundary = new Rectangle(x, y, height, width);
-        boundary.setBounds(boundary.getBounds());
+        boundary.setBounds(boundary);
         this.img = bullet;
         this.hitSomething = false;
         this.angle = player.getAngle();
@@ -45,30 +46,55 @@ public class Bullet {
     }
 
     public void direction() {
-        if(this.angle > 360) {
-            this.angle -= 360;}
-        if(this.angle < 0) {
-            this.angle += 360;}
-        vx = (int) Math.round(R * Math.cos(Math.toRadians(angle)));
-        vy = (int) Math.round(R * Math.sin(Math.toRadians(angle)));
 
-        if(angle >= 0 && angle <= 90) {
-            x += vx;
-            y += vy;
+            if (this.angle > 360) {
+                this.angle -= 360;
+            }
+            if (this.angle < 0) {
+                this.angle += 360;
+            }
+            vx = (int) Math.round(R * Math.cos(Math.toRadians(this.angle)));
+            vy = (int) Math.round(R * Math.sin(Math.toRadians(this.angle)));
+        while(!this.hitSomething) {
+
+
+//            if(this.angle < 360 && this.angle > 180){
+//                x += vx;
+//                y += vy;
+//            }
+            //for some reason this doenst work without if statements
+            if(this.angle > 0 && this.angle < 90){
+                x += vx;
+                y += vy;
+            }
+            //not working
+            if(this.angle > 90 && this.angle < 180){
+                x += vx;
+                y += vy;
+            }
+            if(this.angle > 270 && this.angle < 360){
+                y += vy;
+                x += vx;
+            }
+            if(this.angle > 180 && this.angle < 270){
+                x += vx;
+                y += vy;
+            }
+            if(this.angle == 90){
+                y += vy;
+            }
+            if(this.angle == 180){
+                x += vx;
+            }
+            if(this.angle == 360 || this.angle == 0){
+                x += vx;
+            }
+            this.boundary.setLocation(x, y);
+            this.boundary.setBounds(boundary.getBounds());
+            System.out.println("BULLET \n" + "x = " + this.x + " y = " + this.y + " angle = " + this.angle);
+            hasHit();
+
         }
-        if(angle > 90 && angle <= 180){
-            x += vx;
-            y -= vy;
-        }
-        if(angle > 180 && angle <= 270){
-            x -= vx;
-            y-= vy;
-        }
-        if(angle > 270 && angle <= 360){
-            x -= vx;
-            y += vy;
-        }
-        System.out.println("BULLET \n" + "x = " + this.x + " y = " + this.y + " angle = " + this.angle);
 
     }
     public void hasHit(){
@@ -76,12 +102,24 @@ public class Bullet {
             Map some = Map.mapA.get(i);
             check = new Rectangle(some.getWallBoundary());
             if(check.intersects(this.boundary)){
-                System.out.println("HIT");
+
                //this is if the bullet hits an breakable wall
                 if(some.getKind() == 2){
+                    System.out.println("HIT BREAKABLE");
                     Map.mapA.remove(i);
                     this.hitWall = true;
                     this.hitSomething = true;
+                    return;
+
+                }else if(some.getKind() == 1){
+                    System.out.println("HIT UNBREAKABLAE");
+                    this.hitWall =true;
+                    this.hitSomething = true;
+                    return;
+
+                }else if(some.getKind() == 3 || some.getKind() == 4){
+                    this.hitWall = false;
+                    this.hitSomething = false;
                     return;
                 }
 
@@ -95,14 +133,20 @@ public class Bullet {
             check = otherTank.getRectangle();
             if(check.intersects(this.boundary)){
                 //update health of tank
-                    otherTank.updateHealth(this.dmgToOtherTank);
+                if(otherTank.getShieldStatus()){
+                    this.hitTank = true;
+                    this.hitSomething = true;
+                    otherTank.setShieldStatus(false);
+                    return;
+                }
+                otherTank.updateHealth(this.dmgToOtherTank);
                 this.hitTank = true;
                 this.hitSomething = true;
                 return;
 
             }
         }
-        this.hitSomething = true;
+        this.hitSomething = false;
 
     }
 

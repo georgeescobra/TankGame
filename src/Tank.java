@@ -277,7 +277,7 @@ public class Tank {
     public void shoot() {
         try{
             projectile = ImageIO.read(new File("resources/Bullet.png"));
-            bullet = new Bullet(this.getX(), this.getY(), projectile, this);
+            bullet = new Bullet(this.getX() + (this.getW() / 2), this.getY() + (this.getH() / 2), projectile, this);
             this.ammo.add(bullet);
         }catch(IOException e){
             System.out.println("***ERROR SHOOTING SHOT***");
@@ -287,15 +287,13 @@ public class Tank {
     public void drawBullet(Graphics2D buffer, Graphics2D g2, BufferedImage world){
         for(int i = 0; i < ammo.size(); i++) {
             Bullet bull = ammo.get(i);
-            while(!bull.gethasHit()) {
                 bull.direction();
                 double rotated = Math.toRadians(bull.getAngle());
                 AffineTransform tx = AffineTransform.getRotateInstance(rotated, bull.getW() / 2, bull.getH() / 2);
                 AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
                 buffer.drawImage(op.filter(bull.getImg(), null), bull.getX(), bull.getY(), null);
                 g2.drawImage(world, 0 ,0, null);
-                bull.hasHit();
-            }
+
             ammo.remove(i);
         }
 
@@ -347,6 +345,9 @@ public class Tank {
     }
     public int getHealth(){
         return this.healthOfTank.getHealth();
+    }
+    public void setShieldStatus(boolean s){
+        this.shield.setStatus(s);
     }
 
     public Rectangle getRectangle(){return this.boundary;}

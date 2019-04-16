@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 public class Game extends JPanel{
 
     public static final int screenWidth = 1280;
-    public static final int screenHeight = 704;
+    public static final int screenHeight = 720;
 
     private BufferedImage world;
     private BufferedImage lastWorld;
@@ -84,11 +84,11 @@ public class Game extends JPanel{
             try {
 
                 this.tank1 = ImageIO.read(new File("resources/Tank1.png"));
-                p1 = new Tank(40, 40, 1, 1, 0, this.tank1);
+                p1 = new Tank(40, 40, 0, 0, 0, this.tank1);
                 p1.addTank(p1);
 
                 tank2 = ImageIO.read(new File("resources/Tank2.png"));
-                p2 = new Tank(1226, 648, 1, 1, 180, this.tank2);
+                p2 = new Tank(1226, 648, 0, 0, 180, this.tank2);
                 p2.addTank(p2);
 
             }catch(IOException e){
@@ -215,9 +215,20 @@ public class Game extends JPanel{
 
         }
 
+
         buffer.drawImage(this.tank1.getScaledInstance( p1.getW() , p1.getH(), Image.SCALE_SMOOTH), rotation, null);
         buffer.drawImage(this.tank2.getScaledInstance( p2.getW() , p2.getH(), Image.SCALE_SMOOTH), rotation2, null);
 
+        if(p1.getHealth() <= 0 || p2.getHealth() <= 0) {
+            //show the game over screen
+            try {
+                BufferedImage over = ImageIO.read(new File("resources/game.png"));
+                buffer.drawImage(over, 0, 0, null);
+                g2.drawImage(this.world, 0, 0, null);
+            } catch (IOException E) {
+
+            }
+        }
 
 
 
@@ -242,7 +253,6 @@ public class Game extends JPanel{
                 newGame.p2.update();
                 newGame.repaint();
                 if(newGame.p1.getHealth() <= 0 || newGame.p2.getHealth() <= 0){
-                    //show the game over screen
                     break;
                 }
                 System.out.println(newGame.p1);

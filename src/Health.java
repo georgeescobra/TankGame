@@ -11,4 +11,5 @@ public class Health {
     public void updateHealth(int dmg){
         this.health -= dmg;
     }
+
 }
