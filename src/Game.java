@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.awt.Rectangle;
+import java.nio.Buffer;
 import javax.imageio.ImageIO;
 
 
@@ -237,8 +238,11 @@ public class Game extends JPanel{
 //
 //        buffer.setColor(Color.RED);
 //        buffer.drawRect(p2.getX(), p2.getY(), p2.getW() , p2.getH());
+        g2.drawImage(this.world,0,0,null);
+        BufferedImage minimap = this.world.getSubimage(0, 0, screenWidth, screenHeight);
+        g2.scale(.2, .2);
+        g2.drawImage(minimap, 2650,  2800, null);
 
-        g2.drawImage(this.lastWorld,0,0,null);
     }
 
 
